@@ -1,0 +1,30 @@
+services:
+  php:
+    build: ./php
+    container_name: php
+    working_dir: /var/www/html
+    volumes:
+      - ./app:/var/www/html
+      - ./data:/var/www/html/data  # Mount a directory for SQLite database
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - backend
+
+volumes:
+  data: # Named volume for SQLite data (optional, can also use relative path in php service)
+
+networks:
+  backend:
+    driver: bridge
